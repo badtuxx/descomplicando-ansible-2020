@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: giropops
+    run: nginx
+    track: stable
+  name: giropops
+  namespace: default
+spec:
+  externalTrafficPolicy: Cluster
+  ports:
+  - nodePort: 32222
+    name: http
+    port: 80
+    protocol: TCP
+    targetPort: 80
+  - nodePort: 32111
+    name: prometheus
+    port: 32111
+    protocol: TCP
+    targetPort: 32111
+  selector:
+    app: giropops
+  sessionAffinity: None
+  type: NodePort

@@ -1,0 +1,11 @@
+- name: helm add repo
+  shell: helm repo add stable {{ url_repo_helm }}
+  register: prometheus_add_repo
+
+- name: helm update
+  shell: helm repo update
+  register: prrometheus_repo_update
+
+- name: Instalando o Prometheus Operator
+  shell: helm install {{ deploy_prometheus }}
+  register: prometheus_install

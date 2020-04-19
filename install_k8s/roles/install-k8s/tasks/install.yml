@@ -1,0 +1,25 @@
+- name: Instalando o Docker
+  shell: curl -fsSL https://get.docker.com | bash
+  notify: Restart Docker
+
+
+- name: Adicionando as chaves do repo apt do k8s
+  apt_key:
+    url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+    state: present
+
+- name: Adicionando o repo do k8s
+  apt_repository:
+    repo: deb https://apt.kubernetes.io/ kubernetes-xenial main
+    state: present
+
+- name: Instalando os pacotes kubeadm, kubelet e kubectl
+  apt:
+    name: "{{ packages }}"
+  vars:
+    packages:
+    - kubelet
+    - kubeadm
+    - kubectl
+  notify: Restart Kubelet
+

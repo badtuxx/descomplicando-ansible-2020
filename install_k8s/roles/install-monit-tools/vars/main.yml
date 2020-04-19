@@ -1,0 +1,4 @@
+---
+# vars file for install-monit-tools
+url_repo_helm: https://kubernetes-charts.storage.googleapis.com
+deploy_prometheus: "--set prometheusOperator.createCustomResource=false meu-querido-prometheus stable/prometheus-operator"

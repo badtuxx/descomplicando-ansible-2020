@@ -1,0 +1,124 @@
+- name: Criando o Sec Group
+  local_action:
+    module: ec2_group
+    name: "{{ sec_group_name }}"
+    description: sg giropops
+    profile: "{{ profile }}"
+    region: "{{ region }}"
+    rules:
+    - proto: tcp
+      from_port: 22
+      to_port: 22
+      cidr_ip: 0.0.0.0/0
+      rule_desc: SSH
+    - proto: tcp
+      from_port: 2379
+      to_port: 2380
+      cidr_ip: 0.0.0.0/0
+      rule_desc: etcd server API
+    - proto: tcp
+      from_port: 6443
+      to_port: 6443
+      cidr_ip: 0.0.0.0/0
+      rule_desc: kube-apiserver
+    - proto: tcp
+      from_port: 10250
+      to_port: 10250
+      cidr_ip: 0.0.0.0/0
+      rule_desc: Kubelet API
+    - proto: tcp
+      from_port: 10251
+      to_port: 10251
+      cidr_ip: 0.0.0.0/0
+      rule_desc: kube-scheduler
+    - proto: tcp
+      from_port: 10252
+      to_port: 10252
+      cidr_ip: 0.0.0.0/0
+      rule_desc: kube-controller-manager
+    - proto: tcp
+      from_port: 10255
+      to_port: 10255
+      cidr_ip: 0.0.0.0/0
+      rule_desc: Kubelet API Read-only
+    - proto: tcp
+      from_port: 30000
+      to_port: 32767
+      cidr_ip: 0.0.0.0/0
+      rule_desc: NodePort Services
+    - proto: tcp
+      from_port: 6783
+      to_port: 6783
+      cidr_ip: 0.0.0.0/0
+      rule_desc: WeaveNet
+    - proto: udp
+      from_port: 6783
+      to_port: 6783
+      cidr_ip: 0.0.0.0/0
+      rule_desc: Weavenet
+    - proto: udp
+      from_port: 6784
+      to_port: 6784
+      cidr_ip: 0.0.0.0/0
+      rule_desc: Weavenet
+    - proto: tcp
+      from_port: 32222
+      to_port: 32222
+      cidr_ip: 0.0.0.0/0
+      rule_desc: GiropopsApp
+    - proto: tcp
+      from_port: 32111
+      to_port: 32111
+      cidr_ip: 0.0.0.0/0
+      rule_desc: GiropopsAppProm
+    rules_egress:
+    rules_egress:
+    rules_egress:
+    - proto: all
+      cidr_ip: 0.0.0.0/0
+  register: basic_firewall
+
+- name: Criando a instancia EC2
+  local_action: ec2
+    group={{ sec_group_name }}
+    instance_type={{ instance_type }}
+    image={{ image }}
+    profile={{ profile }}
+    wait=true
+    region={{ region }}
+    keypair={{ keypair }} 
+    count={{ count }}
+  register: ec2
+
+- name: Adicionando a instancia ao inventario temp
+  add_host: name={{ item.public_ip  }} groups=giropops-new
+  with_items: "{{ ec2.instances }}"
+
+- name: Adicionando o IP publico da instancia criada ao arquivo hosts
+  local_action: lineinfile
+    dest="./hosts"
+    regexp={{ item.public_ip }}
+    insertafter="[kubernetes]" line={{ item.public_ip }}
+  with_items: "{{ ec2.instances }}"
+
+
+- name: Adicionando o IP privado da instancia criada ao arquivo hosts
+  local_action: lineinfile
+    dest="./hosts"
+    regexp={{ item.private_ip }}
+    insertafter="[kubernetes]" line={{ item.private_ip }}
+  with_items: "{{ ec2.instances }}"
+
+- name: Esperando o SSH
+  local_action: wait_for
+    host={{ item.public_ip }}
+    port=22
+    state=started
+  with_items: "{{ ec2.instances }}"
+
+- name: Adicionando uma tag na instancia
+  local_action: ec2_tag resource={{ item.id }} region={{ region }} profile={{ profile }} state=present
+  with_items: "{{ ec2.instances }}"
+  args:
+    tags:
+      Name: ansible-{{ item.ami_launch_index|int + 1 }}

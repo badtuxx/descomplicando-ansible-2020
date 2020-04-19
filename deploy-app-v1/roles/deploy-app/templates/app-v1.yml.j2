@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: giropops-v1
+spec:
+  replicas: {{ numeros_replicas }}
+  selector:
+    matchLabels:
+      app: giropops
+  template:
+    metadata:
+      labels:
+        app: giropops
+        version: {{ version }}
+      annotations:
+        prometheus.io/scrape: "{{ prometheus_scrape }}"
+        prometheus.io/port: "{{ prometheus_port }}"
+    spec:
+      containers:
+      - name: giropops
+        image: linuxtips/nginx-prometheus-exporter:{{ version }}
+        env:
+        - name: VERSION
+          value: {{ version }}
+        ports:
+        - containerPort: {{ nginx_port }}
+        - containerPort: {{ prometheus_port }}
