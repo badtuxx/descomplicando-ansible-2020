@@ -1,7 +1,21 @@
-- name: Instalando o Docker
-  shell: curl -fsSL https://get.docker.com | bash
-  notify: Restart Docker
+- name: Download Script Instalacao Docker
+  get_url:
+    url: "{{ url_docker_script }}"
+    dest: "{{ dst_docker_script }}"
+    mode: '0755'  
+  register: download_script
 
+- name: Instalando o Docker
+  shell: "{{ dst_docker_script }}"
+  when: download_script.failed | bool = false
+  notify: Restart Docker
+  register: instalando_docker
+
+- name: Removendo script Instalacao Docker
+  file:
+    path: "{{ dst_docker_script }}"
+    state: absent
+    register: removendo_script
 
 - name: Adicionando as chaves do repo apt do k8s
   apt_key:
