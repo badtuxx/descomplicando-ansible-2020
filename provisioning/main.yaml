@@ -1,3 +1,3 @@
 - hosts: local
   roles:
-  - criando-instancias
+  - criando_instancias

@@ -1,0 +1,4 @@
+---
+# vars file for install-k8s
+dst_docker_script: /tmp/install_docker.sh
+url_docker_script: https://get.docker.com

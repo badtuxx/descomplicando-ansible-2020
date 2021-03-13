@@ -1,7 +1,7 @@
 galaxy_info:
-  author: your name
-  description: your role description
-  company: your company (optional)
+  author: Jeferson Fernando
+  description: Cria as instancias EC2
+  company: LINUXtips
 
   # If the issue tracker for your role is not on github, uncomment the
   # next line and provide a value
@@ -14,7 +14,7 @@ galaxy_info:
   # - GPL-3.0-only
   # - Apache-2.0
   # - CC-BY-4.0
-  license: license (GPL-2.0-or-later, MIT, etc)
+  license: MIT
 
   min_ansible_version: 2.9
 
@@ -27,17 +27,16 @@ galaxy_info:
   # To view available platforms and versions (or releases), visit:
   # https://galaxy.ansible.com/api/v1/platforms/
   #
-  # platforms:
-  # - name: Fedora
-  #   versions:
-  #   - all
-  #   - 25
-  # - name: SomePlatform
-  #   versions:
-  #   - all
-  #   - 1.0
-  #   - 7
-  #   - 99.99
+  platforms:
+  - name: Ubuntu
+    versions:
+    - all
+    - 20.10
+    - 20.04
+  - name: Debian
+    versions:
+    - all
+    - 10
 
   galaxy_tags: []
     # List tags for your role here, one per line. A tag is a keyword that describes

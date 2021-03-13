@@ -12,7 +12,7 @@
   register: kubeadm_reset
 
 - name: Adicionando o worker ao cluster k8s
-  shell:
+  command:
     kubeadm join --token={{ hostvars['K8S_TOKEN_HOLDER']['token'] }} 
     --discovery-token-ca-cert-hash sha256:{{ hostvars['K8S_TOKEN_HOLDER']['hash'] }} 
     {{K8S_MASTER_NODE_IP}}:{{K8S_API_SECURE_PORT}}
