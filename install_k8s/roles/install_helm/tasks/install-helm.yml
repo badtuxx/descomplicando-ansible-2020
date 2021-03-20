@@ -8,11 +8,9 @@
   register: download
 
 - name: Instalando Helm
-  shell:
-    /tmp/get_helm.sh
-  when:
-    - download.failed|bool == false 
+  command: /tmp/get_helm.sh
+  when: download
   register: install_helm
 
-- name:
+- name: Variavel var
   debug: var=install_helm

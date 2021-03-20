@@ -2,15 +2,19 @@
   command:
     kubeadm reset --force
   register: kubeadm_reset
+  changed_when: '"No etcd config found" not in kubeadm_reset.stdout'
 
 - name: Inicializando o cluster k8s
   command:
     kubeadm init
   register: kubeadm_init
+  changed_when: '"initialized successfully" in kubeadm_init.stdout'
+
 
 - name: Criando o diretorio .kube
   file:
     path: ~/.kube
+    mode: 0750
     state: directory 
 
 - name: Linkando o arquivo admin.conf para o ~/.kube/config
@@ -18,29 +22,33 @@
     src: /etc/kubernetes/admin.conf
     dest: ~/.kube/config
     state: link
+  changed_when: True
 
 - name: Configurando o pod network Weavenet 
   shell: kubectl apply -f {{ default_url_weavenet }}
   register: weavenet_result
+  changed_when: '"created" in weavenet_result.stdout'
 
 - name: Pegando o token para adicionar os workers no cluster
   shell: kubeadm token list | cut -d ' ' -f1  | sed -n '2p'
   register: k8s_token
+  changed_when: True
 
 - name: CA Hash
   shell: openssl x509 -pubkey -in /etc/kubernetes/pki/ca.crt | openssl rsa -pubin -outform der 2>/dev/null | openssl dgst -sha256 -hex | sed 's/^.* //'
   register: k8s_master_ca_hash
+  changed_when: True
 
 - name: Adicionando o token e o hash em um dummy host
   add_host:
     name: "K8S_TOKEN_HOLDER"
     token: "{{ k8s_token.stdout }}"
     hash: "{{ k8s_master_ca_hash.stdout }}"
-
-- name: 
+  
+- name: Imprimindo o Token 
   debug:
     msg: "[MASTER] K8S_TOKEN_HOLDER - O token eh {{ hostvars['K8S_TOKEN_HOLDER']['token'] }}"
 
-- name: 
+- name: Imprimindo o Hash
   debug:
     msg: "[MASTER] K8S_TOKEN_HOLDER - O hash eh {{ hostvars['K8S_TOKEN_HOLDER']['hash'] }}"

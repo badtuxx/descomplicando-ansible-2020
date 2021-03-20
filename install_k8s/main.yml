@@ -5,8 +5,11 @@
   pre_tasks:
   - name: 'Atualizando o repo'
     raw: 'apt-get update'
+    changed_when: False
   - name: 'Instalando o Python'
     raw: 'apt-get install -y python'
+    register: install_python
+    changed_when: '"Setting up python" in install_python.stdout'
   roles:
   - { role: install_k8s, tags: ["install_k8s_role"]  } 
 

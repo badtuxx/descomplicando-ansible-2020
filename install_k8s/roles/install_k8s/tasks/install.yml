@@ -6,8 +6,8 @@
   register: download_script
 
 - name: Instalando o Docker
-  shell: "{{ dst_docker_script }}"
-  when: download_script.failed | bool = false
+  command: "{{ dst_docker_script }}"
+  when: download_script
   notify: Restart Docker
   register: instalando_docker
 
@@ -15,7 +15,7 @@
   file:
     path: "{{ dst_docker_script }}"
     state: absent
-    register: removendo_script
+  register: removendo_script
 
 - name: Adicionando as chaves do repo apt do k8s
   apt_key:
