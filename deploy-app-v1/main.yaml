@@ -2,4 +2,4 @@
   become: yes
   user: ubuntu
   roles:
-  - { role: deploy-app, tags: ["deploy_app_role"]  }
+  - { role: deploy_app, tags: ["deploy_app"] }
