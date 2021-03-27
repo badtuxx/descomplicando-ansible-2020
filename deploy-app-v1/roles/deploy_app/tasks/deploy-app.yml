@@ -16,7 +16,7 @@
   register: copiando_template
 
 - name: Copiando o arquivo de service da app para o host
-  copy: src={{ item.src }} dest={{ item.dest }} mode='0755'
+  copy: src={{ item.src }} dest={{ item.dest }} mode='0644'
   with_items:
     - { src: 'service-app.yml', dest: '/opt/giropops/service-app.yml' }
   register: copiando_service_file
