@@ -29,5 +29,5 @@
 - name: Criando o Service da App Giropops
   command: kubectl apply -f /opt/giropops/service-app.yml
   register: deploy_svc_app
-  changed_when: '"app-v1 created" in deploy_svc_app.stdout'
+  changed_when: '"service/giropops created" in deploy_svc_app.stdout'
 
