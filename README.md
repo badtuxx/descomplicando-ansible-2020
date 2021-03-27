@@ -17,7 +17,7 @@ Projeto com contribuição dos alunos e o chat da Twitch.
 ## TODO
 
 ```
-- Vamos conhecer e utilizar o ansible-lint para deixar o código que criamos um bocado melhor.
+- Vamos conhecer e utilizar o ansible-lint para deixar o código que criamos um bocado melhor. (https://ansible-lint.readthedocs.io/en/latest/usage.html)
 - 
 
 
