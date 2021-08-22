@@ -17,6 +17,19 @@
     state: absent
   register: removendo_script
 
+- name: Configurado o docker para usar o Systemd
+  ansible.builtin.lineinfile:
+    path: /etc/docker/daemon.json
+    line: "{{ docker_json }}"
+    create: yes
+    mode: "0755"
+
+- name: Restartando o Docker Daemon
+  systemd:
+    state: restarted
+    daemon_reload: yes
+    name: docker
+
 - name: Adicionando as chaves do repo apt do k8s
   apt_key:
     url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
@@ -36,4 +49,3 @@
     - kubeadm
     - kubectl
   notify: Restart Kubelet
-
